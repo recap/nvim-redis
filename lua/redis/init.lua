@@ -8,6 +8,7 @@ local function setup(parameters)
   vim.g.redis_host_port = 6379
   vim.g.redis_password = ""
   vim.g.redis_user = ""
+  vim.g.redis_db = 0
 end
 
 local function is_empty(s)
@@ -21,9 +22,15 @@ end
 vim.api.nvim_create_user_command(
   'RListKeys',
   function(parameters)
-    fetch.fetch_keys()
+    pattern = ""
+    if is_empty(parameters.args) then
+      pattern = "'*'"
+    else
+      pattern = parameters.args
+    end
+    fetch.fetch_keys(pattern)
   end,
-  {bang = false, desc = 'list redis keys', nargs=0}
+  {bang = false, desc = 'list redis keys', nargs='?'}
 )
 
 -- Get a redis key value
@@ -72,7 +79,9 @@ vim.api.nvim_create_user_command(
     if argparse.exists(args, 'user') then
       vim.g.redis_user = args.user
     end
-
+    if argparse.exists(args, 'db') then
+      vim.g.redis_db = args.db
+    end
   end,
   {bang = false, desc = 'list redis keys', nargs='*'}
 )

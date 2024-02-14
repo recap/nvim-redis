@@ -2,11 +2,12 @@
 local M = {}
 
 local function generate_cmd()
-  host = vim.g.redis_host
-  port = vim.g.redis_host_port
-  user = vim.g.redis_user
-  pass = vim.g.redis_password
-  return "redis-cli -h "..host.." -p "..port.." --user "..user.." --pass "..pass
+  host  = vim.g.redis_host
+  port  = vim.g.redis_host_port
+  user  = vim.g.redis_user
+  pass  = vim.g.redis_password
+  db    = vim.g.redis_db
+  return "redis-cli -h "..host.." -p "..port.." --user "..user.." --pass "..pass.." -n "..db
 end
 
 local function is_empty(s)
@@ -38,9 +39,9 @@ local function handle_cmd_error(chanid, data, name)
 end
 
 
-function M.fetch_keys()
+function M.fetch_keys(pattern)
 
-  command = generate_cmd().." keys '*'"
+  command = generate_cmd().." keys "..pattern
   
   local jobid = vim.fn.jobstart(command,
       {
