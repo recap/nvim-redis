@@ -1,5 +1,6 @@
 -- Imports the plugin's additional Lua modules.
 local fetch = require("redis.fetch")
+local argparse = require("redis.argparse")
 
 local function setup(parameters)
 end
@@ -10,16 +11,35 @@ end
 
 -- Routes calls made to this module to functions in the
 -- plugin's other modules.
---M.fetch_keys = fetch.fetch_keys
+
 vim.api.nvim_create_user_command(
-  'ListKeys',
+  'RedisListKeys',
   function(parameters)
-    print(vim.inspect(parameters))
-    print(parameters.fargs[1])
-    print(parameters.fargs[2])
-    fetch.fetch_keys(parameters.args)
+    args = argparse.parse(parameters.fargs)
+    if argparse.exists(args, 'host') then
+      fetch.fetch_keys(args.host)
+    elseif vim.g.redis_host ~= nil then
+      fetch.fetch_keys(vim.g.redis_host)
+    else
+      print("missing host argument!")
+    end
   end,
   {bang = false, desc = 'list redis keys', nargs='*'}
+)
+
+vim.api.nvim_create_user_command(
+  'RedisHost',
+  function(parameters)
+    if (parameters.args ~= '') and (parameters.args ~= nil) then
+      vim.g.redis_host = parameters.args
+      print("set redis_host: "..vim.g.redis_host)
+    else
+      if (vim.g.redis_host ~= nil) then
+        print("redis_host: "..vim.g.redis_host)
+      end
+    end
+  end,
+  {bang = false, desc = 'list redis keys', nargs='?'}
 )
 
 return {
