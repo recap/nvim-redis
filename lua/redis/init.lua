@@ -21,14 +21,7 @@ end
 vim.api.nvim_create_user_command(
   'RListKeys',
   function(parameters)
-    args = argparse.parse(parameters.fargs)
-    if argparse.exists(args, 'host') then
-      fetch.fetch_keys(args.host)
-    elseif vim.g.redis_host ~= nil then
-      fetch.fetch_keys(vim.g.redis_host)
-    else
-      print("Missing host argument!")
-    end
+    fetch.fetch_keys()
   end,
   {bang = false, desc = 'list redis keys', nargs=0}
 )
@@ -47,7 +40,7 @@ vim.api.nvim_create_user_command(
 
 -- Get a redis key value
 vim.api.nvim_create_user_command(
-  'RGetHKey',
+  'RHGetKey',
   function(parameters)
     --print(vim.inspect(parameters))
     if #parameters.fargs ~= 2 then

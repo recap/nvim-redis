@@ -1,6 +1,14 @@
 -- Creates an object for the module.
 local M = {}
 
+local function generate_cmd()
+  host = vim.g.redis_host
+  port = vim.g.redis_host_port
+  user = vim.g.redis_user
+  pass = vim.g.redis_password
+  return "redis-cli -h "..host.." -p "..port.." --user "..user.." --pass "..pass
+end
+
 local function is_empty(s)
   return ((s == '') or (s == nil))
 end
@@ -32,10 +40,7 @@ end
 
 function M.fetch_keys()
 
-  host = vim.g.redis_host
-  port = vim.g.redis_host_port
-
-  command = "redis-cli -h "..host.." -p "..port.." keys '*'"
+  command = generate_cmd().." keys '*'"
   
   local jobid = vim.fn.jobstart(command,
       {
@@ -60,10 +65,7 @@ function M.get_key(key)
     return
   end
 
-  host = vim.g.redis_host
-  port = vim.g.redis_host_port
-
-  command = "redis-cli -h "..host.." -p "..port.." get "..key
+  command = generate_cmd().." get "..key
 
   no_output = false
   
@@ -93,10 +95,7 @@ function M.hget_key(key, field)
     return
   end
 
-  host = vim.g.redis_host
-  port = vim.g.redis_host_port
-
-  command = "redis-cli -h "..host.." -p "..port.." hget "..key.." "..field
+  command = generate_cmd().." hget "..key.." "..field
 
   no_output = false
   
