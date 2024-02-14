@@ -25,10 +25,10 @@ List all keys in Redis
 ```
 ### Get key value
 ```
-RGetKey <key>
+:RGetKey <key>
 ```
 
 ### HGet key field value
 ```
-RHGetKey <key> <field>
+:RHGetKey <key> <field>
 ```
